@@ -1,0 +1,19 @@
+const mqtt = require('mqtt');
+const mqttClient = mqtt.connect('client_livingroom3@http://192.168.1.25:1883', { username: "Tush", password: "Jeni" });
+
+const queryTopic = 'resolveMyQuery';
+const responseTopic = 'Accelerometer';
+
+mqttClient.on('connect', function () {
+    console.log('Server connected to Mqtt broker');
+    mqttClient.subscribe(queryTopic);
+});
+
+// On receiving message from any client
+mqttClient.on('message', function (topic, message) {
+    console.log('Received query from client: -', message.toString());
+    // Responding to client
+    mqttClient.publish(responseTopic, 'Hello client, yes I can hear you');
+    console.log('Responded to client');
+    mqttClient.end();
+});AccelerometerAccelerometer

@@ -1,0 +1,8 @@
+{
+  "name": "Publisher_BMP180",
+  "main": "Publisher.js",
+  "dependencies": {
+    "bmp180-sensor": "*",
+    "mqtt": "*"
+  }
+}

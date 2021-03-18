@@ -1,0 +1,8 @@
+{
+  "name": "MQTT_Subscriber",
+  "main": "Subcriber.js",
+  "dependencies": {
+    "mqtt": "*",
+    "ws": "7.4.4"
+  }
+}

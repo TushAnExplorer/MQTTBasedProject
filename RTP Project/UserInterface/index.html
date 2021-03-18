@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+
+<head>
+    <title>Realtime Sensor Chart</title>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script>
+        google.charts.load('current', {'packages':['gauge']});
+        google.charts.setOnLoadCallback(drawGuages);
+
+//google.charts.load('current', {packages: ['corechart', 'line']});
+	//	google.charts.setOnLoadCallback(drawLineColors);
+
+        function myWS(my_gauges, data_definition, options){
+           /* if("WebSocket" in window) {
+                alert('My Browser supports Websockets');
+            } else {
+                alert('My Browser does NOT supports Websockets');
+            }*/
+
+            var ws = new WebSocket('ws://127.0.0.1:8085');
+
+            ws.onopen = function () {
+                ws.send('Gauges are now connected');
+            }
+
+            ws.onmessage = function (evt) {
+                // Parse the received JSON
+                var rxMsg = JSON.parse(evt.data);
+                console.log(rxMsg);
+				//var Pres_Bar = rxMsg.pressure/10000;
+                // Set the values
+                data_definition.setValue(0, 1,  rxMsg.temperature);
+                data_definition.setValue(1, 1, rxMsg.pressure);
+				data_definition.setValue(2, 1, rxMsg.Intensity);
+				data_definition.setValue(3, 1, rxMsg.Hall_sensor);
+                my_gauges.draw(data_definition, options);
+
+            }
+
+        }
+
+        function drawGuages(){
+            console.log("My guages would be drawn now");
+
+            var my_gauges = new google.visualization.Gauge(document.getElementById('myGauges'));
+
+            var data_definition = google.visualization.arrayToDataTable([
+                ['Label', 'Value'],
+                ['°C', 100],
+                ['Pascal', 110],
+				['Intensity',3],
+				['Fux Density(B)',10]
+            ]);
+
+            var options = {
+                width: 800, height: 400,
+               yellowFrom: 80, yellowTo: 90,
+                redFrom: 90, redTo:110,
+                minorTicks: 5
+            }
+
+            my_gauges.draw(data_definition, options);
+
+            myWS(my_gauges, data_definition, options);
+
+        }
+
+/*
+
+function drawLineColors() {
+      var data = new google.visualization.DataTable();
+      data.addColumn('number', 'X');
+      data.addColumn('number', 'Xadc');
+      data.addColumn('number', 'Yadc');
+	  data.addColumn('number', 'Zadc');
+
+      data.addRows([
+      ]);
+
+      var options = {
+        hAxis: {
+          title: 'Time'
+        },
+        vAxis: {
+          title: 'Axis ADC Readings'
+        },
+        colors: ['#a52714', '#097138']
+      };
+
+      var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+      chart.draw(data, options);
+	  
+	   myWS(chart, data_definition, options);
+    }
+*/
+    </script>
+</head>
+
+<body>
+    <h2>My Web Dashboard</h2>
+    <div id="myGauges" styles="width: 400px; height :150px"></div>
+</body>
+
+</html>
